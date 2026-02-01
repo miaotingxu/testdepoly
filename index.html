@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloudflare Pages + D1 Demo</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 Cloudflare Pages + D1 入门 Demo</h1>
+            <p class="subtitle">使用 Cloudflare Pages 部署前端应用，配合 D1 数据库存储数据</p>
+        </header>
+
+        <main>
+            <section class="card">
+                <h2>📝 添加留言</h2>
+                <form id="messageForm">
+                    <div class="form-group">
+                        <label for="username">用户名：</label>
+                        <input type="text" id="username" name="username" required placeholder="请输入用户名">
+                    </div>
+                    <div class="form-group">
+                        <label for="content">留言内容：</label>
+                        <textarea id="content" name="content" required placeholder="请输入留言内容" rows="4"></textarea>
+                    </div>
+                    <button type="submit">提交留言</button>
+                </form>
+            </section>
+
+            <section class="card">
+                <h2>💬 留言列表</h2>
+                <div id="messageList" class="message-list">
+                    <p class="loading">加载中...</p>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>Powered by Cloudflare Pages & D1 Database</p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
