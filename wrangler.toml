@@ -1,14 +1,19 @@
 name = "d1-demo"
 compatibility_date = "2024-01-01"
 
+[[d1_databases]]
+binding = "DB"
+database_name = "d1-demo-db"
+database_id = "75298027-fc93-43f4-b00d-a0070794ce95"
+
 [env.production]
 [[env.production.d1_databases]]
 binding = "DB"
 database_name = "d1-demo-db"
-database_id = "your-database-id"
+database_id = "75298027-fc93-43f4-b00d-a0070794ce95"
 
 [env.preview]
 [[env.preview.d1_databases]]
 binding = "DB"
 database_name = "d1-demo-db-preview"
-database_id = "your-preview-database-id"
+database_id = "75298027-fc93-43f4-b00d-a0070794ce95"
