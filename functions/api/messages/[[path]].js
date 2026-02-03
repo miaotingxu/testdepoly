@@ -1,6 +1,6 @@
 export async function onRequestGet(context) {
     const { env } = context;
-    
+ 
     try {
         const { results } = await env.DB.prepare(
             'SELECT * FROM messages ORDER BY created_at DESC LIMIT 100'

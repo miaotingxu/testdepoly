@@ -1,4 +1,4 @@
-name = "d1-demo"
+name = "d1-demo-react"
 compatibility_date = "2024-01-01"
 
 [[d1_databases]]

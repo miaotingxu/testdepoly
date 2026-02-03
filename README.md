@@ -1,17 +1,24 @@
-# Cloudflare Pages + D1 入门 Demo
+# Cloudflare Pages + D1 入门 Demo - React 版本
 
-这是一个使用 Cloudflare Pages 部署前端应用，配合 D1 数据库存储数据的入门示例项目。
+这是一个使用 Cloudflare Pages 部署 React 应用，配合 D1 数据库存储数据的入门示例项目。
 
 ## 项目结构
 
 ```
 test/
-├── index.html              # 主页面
-├── style.css              # 样式文件
-├── app.js                 # 前端逻辑
-├── schema.sql             # D1 数据库表结构
-├── wrangler.toml          # Cloudflare 配置文件
+├── index.html              # HTML 入口文件
+├── package.json            # 项目依赖配置
+├── vite.config.js          # Vite 构建配置
+├── wrangler.toml           # Cloudflare 配置文件
 ├── .gitignore             # Git 忽略文件
+├── schema.sql              # D1 数据库表结构
+├── src/
+│   ├── main.jsx            # React 入口文件
+│   ├── App.jsx             # 主应用组件
+│   ├── App.css             # 全局样式
+│   └── components/
+│       ├── MessageForm.jsx   # 留言表单组件
+│       └── MessageList.jsx  # 留言列表组件
 └── functions/
     └── api/
         └── messages/
@@ -25,26 +32,28 @@ test/
 - 💾 D1 数据库：使用 Cloudflare D1 存储留言数据
 - 🚀 Cloudflare Pages：全球 CDN 加速
 - ⚡ Cloudflare Functions：无服务器 API 接口
+- ⚛️ React 18：使用最新 React 特性和 Hooks
+- 🔨 Vite：快速的开发体验和构建工具
+
+## 技术栈
+
+- **前端框架**: React 18
+- **构建工具**: Vite 5
+- **语言**: JavaScript (ES6+)
+- **样式**: CSS3
+- **后端**: Cloudflare Functions (JavaScript)
+- **数据库**: Cloudflare D1 (SQLite)
+- **部署**: Cloudflare Pages
 
 ## 部署步骤
 
-### 1. 安装 Wrangler CLI
-
-Wrangler 是 Cloudflare 的命令行工具，用于部署和管理 Cloudflare 项目。
+### 1. 安装依赖
 
 ```bash
-npm install -g wrangler
+npm install
 ```
 
-### 2. 登录 Cloudflare
-
-```bash
-wrangler login
-```
-
-这会打开浏览器，让你登录 Cloudflare 账户并授权。
-
-### 3. 创建 D1 数据库
+### 2. 创建 D1 数据库
 
 ```bash
 # 创建数据库
@@ -53,52 +62,50 @@ wrangler d1 create d1-demo-db
 # 记录输出的 database_id，后续需要用到
 ```
 
-### 4. 更新 wrangler.toml
+### 3. 更新 wrangler.toml
 
-打开 `wrangler.toml` 文件，将 `your-database-id` 替换为上一步获取的 `database_id`。
+打开 `wrangler.toml` 文件，将 `database_id` 替换为你的实际 ID。
 
-```toml
-[[env.production.d1_databases]]
-binding = "DB"
-database_name = "d1-demo-db"
-database_id = "替换为你的database_id"
-```
-
-### 5. 初始化数据库表结构
+### 4. 初始化数据库表结构
 
 ```bash
 # 执行 schema.sql 创建表
-wrangler d1 execute d1-demo-db --file=./schema.sql
+wrangler d1 execute d1-demo-db --remote --file=./schema.sql
 ```
 
-### 6. 创建 Cloudflare Pages 项目
+### 5. 构建项目
 
-有两种方式创建项目：
+```bash
+npm run build
+```
 
-#### 方式一：通过 Wrangler CLI（推荐）
+### 6. 部署到 Cloudflare Pages
+
+#### 方式一：通过 Wrangler CLI
 
 ```bash
 # 创建 Pages 项目
-wrangler pages project create d1-demo --production-branch=main
+wrangler pages project create d1-demo-react --production-branch=main
 
 # 部署项目
-wrangler pages deploy .
+wrangler pages deploy dist
 ```
 
-#### 方式二：通过 Cloudflare Dashboard
+#### 方式二：通过 Cloudflare Dashboard（推荐）
 
 1. 登录 [Cloudflare Dashboard](https://dash.cloudflare.com/)
 2. 进入 **Workers & Pages** -> **Create application**
-3. 选择 **Pages** -> **Upload assets**
-4. 上传项目文件夹
-5. 在 **Settings** -> **Functions** 中绑定 D1 数据库
+3. 选择 **Pages** -> **Connect to Git**
+4. 选择你的 GitHub 仓库
+5. 配置构建设置：
+   - **Project name**: `d1-demo-react`
+   - **Production branch**: `main`
+   - **Framework preset**: Vite
+   - **Build command**: `npm run build`
+   - **Build output directory**: `dist`
+6. 点击 **Save and Deploy**
 
 ### 7. 绑定 D1 数据库到 Pages Functions
-
-```bash
-# 绑定数据库
-wrangler pages deployment configure --project-name=d1-demo
-```
 
 在 Cloudflare Dashboard 中：
 1. 进入你的 Pages 项目
@@ -113,14 +120,103 @@ wrangler pages deployment configure --project-name=d1-demo
 
 ## 本地开发
 
-如果你想本地测试，可以使用 Wrangler 的本地开发模式：
+### 安装依赖
 
 ```bash
-# 启动本地开发服务器
-wrangler pages dev .
+npm install
 ```
 
-这会启动一个本地服务器，你可以访问 `http://localhost:8788` 查看效果。
+### 启动开发服务器
+
+```bash
+npm run dev
+```
+
+访问 `http://localhost:3000` 查看效果。
+
+### 本地数据库开发
+
+```bash
+# 查询本地数据库
+wrangler d1 execute d1-demo-db --command="SELECT * FROM messages"
+
+# 执行 SQL 文件
+wrangler d1 execute d1-demo-db --file=./schema.sql
+```
+
+## React 组件说明
+
+### App.jsx
+
+主应用组件，管理全局状态和 API 调用。
+
+```jsx
+export default function App() {
+  const [messages, setMessages] = useState([])
+  const [error, setError] = useState(null)
+
+  // 获取留言列表
+  const fetchMessages = async () => { ... }
+
+  // 添加留言
+  const addMessage = async (username, content) => { ... }
+
+  // 页面加载时获取留言
+  useEffect(() => {
+    fetchMessages()
+  }, [])
+
+  return (
+    <div className="container">
+      <MessageForm onSubmit={addMessage} />
+      <MessageList messages={messages} error={error} />
+    </div>
+  )
+}
+```
+
+### MessageForm.jsx
+
+留言表单组件，处理用户输入和表单提交。
+
+```jsx
+export default function MessageForm({ onSubmit }) {
+  const [username, setUsername] = useState('')
+  const [content, setContent] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const handleSubmit = async (e) => { ... }
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <input value={username} onChange={...} />
+      <textarea value={content} onChange={...} />
+      <button>提交留言</button>
+    </form>
+  )
+}
+```
+
+### MessageList.jsx
+
+留言列表组件，显示所有留言。
+
+```jsx
+export default function MessageList({ messages, error }) {
+  const formatTime = (timestamp) => { ... }
+
+  return (
+    <div className="message-list">
+      {messages.map(message => (
+        <div key={message.id}>
+          <strong>{message.username}</strong>
+          <p>{message.content}</p>
+        </div>
+      ))}
+    </div>
+  )
+}
+```
 
 ## API 接口说明
 
@@ -171,7 +267,7 @@ Content-Type: application/json
 
 ```bash
 # 查询所有留言
-wrangler d1 execute d1-demo-db --command="SELECT * FROM messages"
+wrangler d1 execute d1-demo-db --remote --command="SELECT * FROM messages"
 ```
 
 ### Q: 如何删除数据库？
@@ -190,18 +286,12 @@ wrangler d1 delete d1-demo-db
 
 在 Cloudflare Dashboard 中：
 1. 进入你的 Pages 项目
-2. **Custom domains** -> **Set up a custom domain**
-
-## 技术栈
-
-- **前端**: HTML5, CSS3, JavaScript (ES6+)
-- **后端**: Cloudflare Functions (JavaScript)
-- **数据库**: Cloudflare D1 (SQLite)
-- **部署**: Cloudflare Pages
-- **工具**: Wrangler CLI
+2. **Custom domains** -> **Set up a custom domain`
 
 ## 学习资源
 
+- [React 官方文档](https://react.dev/)
+- [Vite 官方文档](https://vitejs.dev/)
 - [Cloudflare Pages 文档](https://developers.cloudflare.com/pages/)
 - [Cloudflare D1 文档](https://developers.cloudflare.com/d1/)
 - [Cloudflare Functions 文档](https://developers.cloudflare.com/pages/functions/)

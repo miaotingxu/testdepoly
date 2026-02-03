@@ -1,0 +1,18 @@
+{
+  "name": "d1-demo-react",
+  "version": "1.0.0",
+  "description": "Cloudflare Pages + D1 留言板 - React 版本",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.2.1",
+    "vite": "^5.0.0"
+  }
+}
