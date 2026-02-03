@@ -1,14 +1,14 @@
-# Cloudflare Pages + D1 入门 Demo - Next.js 静态导出版本
+# Cloudflare Pages + D1 入门 Demo - Next.js SSR 版本
 
-这是一个使用 Next.js 静态导出部署到 Cloudflare Pages，配合 D1 数据库存储数据的入门示例项目。
+这是一个使用 Next.js SSR（服务端渲染）部署到 Cloudflare Pages，配合 D1 数据库存储数据的入门示例项目。
 
 ## 项目特点
 
-- ⚡ **静态导出**：构建时生成纯静态文件，部署简单
-- 🚀 **快速加载**：静态文件通过 CDN 加速
+- ⚡ **SSR（服务端渲染）**：在服务器上生成 HTML，首屏加载快
+- 🔍 **SEO 友好**：搜索引擎可以完整抓取页面内容
 - 💾 **D1 数据库**：使用 Cloudflare D1 存储留言数据
-- 🌐 **Cloudflare Pages**：全球 CDN 加速
-- ⚛️ **Next.js 14**：使用最新 React 特性
+- 🚀 **Cloudflare Pages**：全球 CDN 加速
+- ⚛️ **Next.js 14**：使用最新 React 特性和 App Router
 - 🔨 **React 18**：使用最新 React 特性和 Hooks
 
 ## 项目结构
@@ -17,7 +17,9 @@
 test/
 ├── pages/
 │   ├── _document.js          # HTML 文档结构
-│   └── index.js              # 首页（客户端渲染）
+│   ├── index.js              # 首页（SSR）
+│   └── api/
+│       └── messages.js        # Next.js API 路由
 ├── components/
 │   ├── MessageForm.js        # 留言表单组件
 │   ├── MessageList.js       # 留言列表组件
@@ -32,7 +34,7 @@ test/
 │   ├── _headers             # Cloudflare Pages 响应头配置
 │   └── _redirects          # Cloudflare Pages 路由重定向配置
 ├── package.json                # 项目依赖配置
-├── next.config.js             # Next.js 配置文件（静态导出）
+├── next.config.js             # Next.js 配置文件
 ├── wrangler.toml              # Cloudflare 配置文件
 ├── .gitignore                # Git 忽略文件
 └── schema.sql                 # D1 数据库表结构
@@ -40,46 +42,40 @@ test/
 
 ## 技术栈
 
-- **前端框架**: Next.js 14
+- **前端框架**: Next.js 14 (App Router)
 - **UI 库**: React 18
-- **渲染方式**: 静态导出（客户端渲染）
+- **渲染方式**: SSR (服务端渲染)
 - **语言**: JavaScript (ES6+)
 - **样式**: CSS3
 - **后端**: Cloudflare Functions (JavaScript)
 - **数据库**: Cloudflare D1 (SQLite)
 - **部署**: Cloudflare Pages
 
-## 静态导出 vs 服务端渲染
+## SSR vs CSR 对比
 
-### 静态导出（本项目）
+### CSR（客户端渲染）- 之前的 Vite 版本
 ```
-构建时 → 生成静态文件 → 部署到 CDN → 用户直接访问静态文件
+用户请求 → 空HTML → 下载JS → 执行JS → 生成DOM → 渲染
+  0ms      50ms     200ms    400ms    600ms    800ms
+                    ↑ 用户看到白屏
 ```
-
-**优点**：
-- 部署简单，不需要服务器
-- 加载速度快（CDN 缓存）
-- 成本低
-- 适合内容不经常变化的网站
 
 **缺点**：
-- 不支持动态路由（需要预定义）
-- 数据在客户端获取
+- 首屏加载慢
+- SEO 不友好
+- 白屏时间长
 
-### 服务端渲染（SSR）
+### SSR（服务端渲染）- 当前的 Next.js 版本
 ```
-用户请求 → 服务器渲染 → 返回 HTML → 渲染 → JS加载 → 激活交互
+用户请求 → 服务器渲染 → 返回HTML → 渲染 → JS加载 → 激活交互
+  0ms      100ms        150ms    200ms    400ms    600ms
+        ↑ 用户立即看到内容
 ```
 
 **优点**：
 - 首屏加载快
 - SEO 友好
-- 支持动态路由
-
-**缺点**：
-- 需要服务器运行
-- 部署复杂
-- 成本高
+- 无白屏
 
 ## 部署步骤
 
@@ -117,26 +113,20 @@ npm run dev
 
 访问 `http://localhost:3000` 查看效果。
 
-**注意**：本地开发时，API 调用会失败，因为没有 Cloudflare Functions 环境。部署到 Cloudflare Pages 后才能正常工作。
-
 ### 6. 构建项目
 
 ```bash
 npm run build
 ```
 
-构建完成后，静态文件会生成在 `out/` 目录。
-
 ### 7. 部署到 Cloudflare Pages
 
 #### 方式一：通过 Wrangler CLI
 
 ```bash
-# 构建静态导出
-npm run build
-
-# 部署到 Cloudflare Pages
-wrangler pages deploy out
+# 使用 @cloudflare/next-on-pages 部署
+npx @cloudflare/next-on-pages
+wrangler pages deploy .vercel/output/static
 ```
 
 #### 方式二：通过 Cloudflare Dashboard（推荐）
@@ -150,7 +140,7 @@ wrangler pages deploy out
    - **Production branch**: `main`
    - **Framework preset**: Next.js
    - **Build command**: `npm run build`
-   - **Build output directory**: `out`
+   - **Build output directory**: `.next`
 6. 点击 **Save and Deploy**
 
 ### 8. 绑定 D1 数据库到 Pages Functions
@@ -170,49 +160,35 @@ wrangler pages deploy out
 
 ### pages/index.js
 
-首页组件，使用客户端渲染。
+首页组件，使用 SSR 渲染。
 
 ```javascript
-export default function Home() {
-  const [messages, setMessages] = useState([])
-  const [error, setError] = useState(null)
-  const [loading, setLoading] = useState(true)
+export default function Home({ initialMessages }) {
+  const [messages, setMessages] = useState(initialMessages || [])
 
-  useEffect(() => {
-    fetchMessages()
-  }, [])
-
-  const fetchMessages = async () => {
-    const response = await fetch('/api/messages')
-    const data = await response.json()
-    setMessages(data.messages)
-  }
-
-  const addMessage = async (username, content) => {
-    const response = await fetch('/api/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, content })
-    })
-    const data = await response.json()
-    if (data.success) {
-      await fetchMessages()
-    }
-  }
+  const addMessage = async (username, content) => { ... }
 
   return (
     <div className="container">
       <MessageForm onSubmit={addMessage} />
-      <MessageList messages={messages} error={error} loading={loading} />
+      <MessageList messages={messages} error={error} />
     </div>
   )
 }
+
+// 服务端获取数据（SSR）
+export async function getServerSideProps() {
+  const response = await fetch('/api/messages')
+  const data = await response.json()
+  return { props: { initialMessages: data.messages } }
+}
 ```
 
-**特点**：
-- 使用 `useEffect` 在客户端获取数据
-- 使用 `useState` 管理状态
-- 所有数据获取都在客户端完成
+**SSR 特点**：
+- `getServerSideProps` 在服务器上执行
+- 数据在服务器上获取
+- HTML 在服务器上生成
+- 首屏加载快
 
 ### components/MessageForm.js
 
@@ -241,11 +217,8 @@ export default function MessageForm({ onSubmit }) {
 留言列表组件，显示所有留言。
 
 ```javascript
-export default function MessageList({ messages, error, loading }) {
+export default function MessageList({ messages, error }) {
   const formatTime = (timestamp) => { ... }
-
-  if (loading) return <div>加载中...</div>
-  if (error) return <div>{error}</div>
 
   return (
     <div className="message-list">
@@ -284,9 +257,30 @@ export default function DeploymentInfo() {
 
 ## API 接口说明
 
-### Cloudflare Functions（functions/api/messages/[[path]].js）
+### Next.js API Routes（pages/api/messages.js）
 
-这是唯一的 API 接口，直接访问 D1 数据库。
+```javascript
+export default async function handler(req, res) {
+  if (req.method === 'GET') {
+    // 获取留言列表
+    const response = await fetch('/api/messages')
+    const data = await response.json()
+    return res.json(data)
+  }
+
+  if (req.method === 'POST') {
+    // 添加留言
+    const { username, content } = req.body
+    const response = await fetch('/api/messages', {
+      method: 'POST',
+      body: JSON.stringify({ username, content })
+    })
+    return res.json(data)
+  }
+}
+```
+
+### Cloudflare Functions（functions/api/messages/[[path]].js）
 
 ```javascript
 export async function onRequestGet(context) {
@@ -309,11 +303,6 @@ export async function onRequestPost(context) {
   return Response.json({ success: true, message: '留言添加成功' })
 }
 ```
-
-**特点**：
-- 直接访问 D1 数据库
-- 部署到 Cloudflare Pages Functions
-- 前端直接调用 `/api/messages`
 
 ## Cloudflare Pages 配置文件说明
 
@@ -340,22 +329,6 @@ export async function onRequestPost(context) {
 /api/* /api/:splat 200
 ```
 
-## next.config.js 配置
-
-```javascript
-const nextConfig = {
-  reactStrictMode: true,
-  output: 'export',  // 启用静态导出
-  images: {
-    unoptimized: true  // 静态导出需要禁用图片优化
-  }
-}
-```
-
-**关键配置**：
-- `output: 'export'`：启用静态导出模式
-- `images.unoptimized: true`：静态导出不支持 Next.js 图片优化
-
 ## 常见问题
 
 ### Q: 如何查看数据库中的数据？
@@ -365,45 +338,37 @@ const nextConfig = {
 wrangler d1 execute d1-demo-db --remote --command="SELECT * FROM messages"
 ```
 
-### Q: 静态导出和 SSR 有什么区别？
-
-**静态导出**：
-- 构建时生成静态文件
-- 不需要服务器
-- 部署简单
-- 适合内容不经常变化的网站
+### Q: SSR 和 CSR 有什么区别？
 
 **SSR（服务端渲染）**：
-- 每次请求都在服务器渲染
-- 需要服务器运行
+- 服务器生成 HTML
 - 首屏加载快
 - SEO 友好
+- 适合内容网站
+
+**CSR（客户端渲染）**：
+- 浏览器生成 HTML
+- 首屏加载慢
+- SEO 不友好
+- 适合管理后台
 
 ### Q: Next.js 和 Vite 有什么区别？
 
 **Next.js**：
 - 框架（包含路由、SSR、API Routes）
-- 支持静态导出、SSR、SSG
+- 支持 SSR/SSG/ISR
 - 适合生产环境
 
 **Vite**：
 - 构建工具（只负责打包）
-- 默认只支持客户端渲染
+- 默认只支持 CSR
 - 适合开发环境
-
-### Q: 本地开发时 API 调用失败怎么办？
-
-本地开发时，Cloudflare Functions 不可用，API 调用会失败。这是正常的，部署到 Cloudflare Pages 后就能正常工作。
 
 ### Q: 如何自定义域名？
 
 在 Cloudflare Dashboard 中：
 1. 进入你的 Pages 项目
 2. **Custom domains** -> **Set up a custom domain**
-
-### Q: 静态导出支持动态路由吗？
-
-静态导出支持有限的动态路由，需要在构建时预定义所有可能的路径。对于完全动态的路由，建议使用 SSR 或 SSG。
 
 ## 学习资源
 

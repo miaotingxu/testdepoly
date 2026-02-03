@@ -1,7 +1,7 @@
 {
   "name": "d1-demo-nextjs",
   "version": "1.0.0",
-  "description": "Cloudflare Pages + D1 留言板 - Next.js 静态导出版本",
+  "description": "Cloudflare Pages + D1 留言板 - Next.js SSR 版本",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

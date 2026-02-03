@@ -1,38 +1,12 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import MessageForm from '../components/MessageForm'
 import MessageList from '../components/MessageList'
 import DeploymentInfo from '../components/DeploymentInfo'
 import '../styles/globals.css'
 
-export default function Home() {
-  const [messages, setMessages] = useState([])
+export default function Home({ initialMessages }) {
+  const [messages, setMessages] = useState(initialMessages || [])
   const [error, setError] = useState(null)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    fetchMessages()
-  }, [])
-
-  const fetchMessages = async () => {
-    try {
-      setLoading(true)
-      const response = await fetch('/api/messages')
-      
-      if (!response.ok) {
-        throw new Error('获取留言失败')
-      }
-
-      const data = await response.json()
-      if (data.success) {
-        setMessages(data.messages || [])
-      }
-    } catch (err) {
-      console.error('Error:', err)
-      setError(err.message)
-    } finally {
-      setLoading(false)
-    }
-  }
 
   const addMessage = async (username, content) => {
     try {
@@ -50,7 +24,13 @@ export default function Home() {
 
       const data = await response.json()
       if (data.success) {
-        await fetchMessages()
+        const newMessage = {
+          id: Date.now(),
+          username,
+          content,
+          created_at: new Date().toISOString()
+        }
+        setMessages(prev => [newMessage, ...prev])
       }
     } catch (err) {
       console.error('Error:', err)
@@ -62,12 +42,12 @@ export default function Home() {
     <div className="container">
       <header>
         <h1>🚀 Cloudflare Pages + D1 入门 Demo</h1>
-        <p className="subtitle">使用 Cloudflare Pages 部署前端应用，配合 D1 数据库存储数据 - Next.js 静态导出版本</p>
+        <p className="subtitle">使用 Cloudflare Pages 部署前端应用，配合 D1 数据库存储数据 - Next.js SSR 版本</p>
       </header>
 
       <main>
         <MessageForm onSubmit={addMessage} />
-        <MessageList messages={messages} error={error} loading={loading} />
+        <MessageList messages={messages} error={error} />
       </main>
 
       <section className="deployment-section">
@@ -75,8 +55,23 @@ export default function Home() {
       </section>
 
       <footer>
-        <p>Powered by Cloudflare Pages & D1 Database & Next.js Static Export</p>
+        <p>Powered by Cloudflare Pages & D1 Database & Next.js SSR</p>
       </footer>
     </div>
   )
+}
+
+export async function getServerSideProps() {
+  try {
+    const response = await fetch('/api/messages')
+    if (!response.ok) {
+      return { props: { initialMessages: [] } }
+    }
+
+    const data = await response.json()
+    return { props: { initialMessages: data.messages || [] } }
+  } catch (err) {
+    console.error('Error:', err)
+    return { props: { initialMessages: [] } }
+  }
 }

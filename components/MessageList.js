@@ -1,4 +1,4 @@
-export default function MessageList({ messages, error, loading }) {
+export default function MessageList({ messages, error }) {
   const formatTime = (timestamp) => {
     if (!timestamp) return ''
     
@@ -16,14 +16,6 @@ export default function MessageList({ messages, error, loading }) {
     if (days < 7) return `${days}天前`
     
     return date.toLocaleDateString('zh-CN')
-  }
-
-  if (loading) {
-    return (
-      <div className="card">
-        <div className="loading">加载中...</div>
-      </div>
-    )
   }
 
   if (error) {

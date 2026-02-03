@@ -4,11 +4,11 @@ export default function DeploymentInfo() {
       name: 'd1-demo-nextjs',
       version: '1.0.0',
       framework: 'Next.js 14 + React 18',
-      description: 'Cloudflare Pages + D1 留言板 - 静态导出版本'
+      description: 'Cloudflare Pages + D1 留言板 - SSR 版本'
     },
     build: {
       command: 'npm run build',
-      outputDir: 'out',
+      outputDir: '.next',
       frameworkPreset: 'Next.js'
     },
     deployment: {
@@ -46,7 +46,7 @@ export default function DeploymentInfo() {
     api: {
       endpoint: '/api/messages',
       methods: ['GET', 'POST'],
-      location: 'functions/api/messages/[[path]].js'
+      location: 'pages/api/messages.js'
     }
   }
 
