@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import MessageForm from './components/MessageForm'
 import MessageList from './components/MessageList'
+import DeploymentInfo from './components/DeploymentInfo'
 
 export default function App() {
   const [messages, setMessages] = useState([])
@@ -62,6 +63,10 @@ export default function App() {
         <MessageForm onSubmit={addMessage} />
         <MessageList messages={messages} error={error} />
       </main>
+
+      <section className="deployment-section">
+        <DeploymentInfo />
+      </section>
 
       <footer>
         <p>Powered by Cloudflare Pages & D1 Database & React</p>
