@@ -1,18 +1,20 @@
 {
-  "name": "d1-demo-react",
+  "name": "d1-demo-nextjs",
   "version": "1.0.0",
-  "description": "Cloudflare Pages + D1 留言板 - React 版本",
+  "description": "Cloudflare Pages + D1 留言板 - Next.js 静态导出版本",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
   },
   "dependencies": {
+    "next": "^14.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^4.2.1",
-    "vite": "^5.0.0"
+    "eslint": "^8.0.0",
+    "eslint-config-next": "^14.0.0"
   }
 }
