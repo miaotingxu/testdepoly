@@ -2,7 +2,6 @@ import { useState } from 'react'
 import MessageForm from '../components/MessageForm'
 import MessageList from '../components/MessageList'
 import DeploymentInfo from '../components/DeploymentInfo'
-import '../styles/globals.css'
 
 export default function Home({ initialMessages }) {
   const [messages, setMessages] = useState(initialMessages || [])
