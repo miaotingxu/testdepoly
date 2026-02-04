@@ -3,6 +3,10 @@ import MessageForm from '../components/MessageForm'
 import MessageList from '../components/MessageList'
 import DeploymentInfo from '../components/DeploymentInfo'
 
+export const config = {
+  runtime: 'edge',
+}
+
 export default function Home({ initialMessages }) {
   const [messages, setMessages] = useState(initialMessages || [])
   const [error, setError] = useState(null)
@@ -60,9 +64,13 @@ export default function Home({ initialMessages }) {
   )
 }
 
-export async function getServerSideProps() {
+export async function getServerSideProps({ req }) {
   try {
-    const response = await fetch('/api/messages')
+    const protocol = req.headers['x-forwarded-proto'] || 'http'
+    const host = req.headers.host
+    const baseUrl = `${protocol}://${host}`
+    
+    const response = await fetch(`${baseUrl}/api/messages`)
     if (!response.ok) {
       return { props: { initialMessages: [] } }
     }
@@ -70,7 +78,7 @@ export async function getServerSideProps() {
     const data = await response.json()
     return { props: { initialMessages: data.messages || [] } }
   } catch (err) {
-    console.error('Error:', err)
+    console.error('Error fetching messages in getServerSideProps:', err)
     return { props: { initialMessages: [] } }
   }
 }

@@ -7,9 +7,9 @@ export default function DeploymentInfo() {
       description: 'Cloudflare Pages + D1 留言板 - SSR 版本'
     },
     build: {
-      command: 'npm run build',
-      outputDir: '.next',
-      frameworkPreset: 'Next.js'
+      command: 'npm run pages:build',
+      outputDir: '.vercel/output/static',
+      frameworkPreset: 'None (Set build command and output directory manually)'
     },
     deployment: {
       platform: 'Cloudflare Pages',
@@ -34,8 +34,8 @@ export default function DeploymentInfo() {
       },
       {
         title: '4. Cloudflare 自动构建',
-        command: '自动执行 npm run build',
-        description: 'Cloudflare Pages 自动检测推送并构建项目'
+        command: '执行 npm run pages:build',
+        description: '使用 @cloudflare/next-on-pages 构建适配边缘运行时的项目'
       },
       {
         title: '5. 绑定 D1 数据库',
