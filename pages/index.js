@@ -3,10 +3,6 @@ import MessageForm from '../components/MessageForm'
 import MessageList from '../components/MessageList'
 import DeploymentInfo from '../components/DeploymentInfo'
 
-export const config = {
-  runtime: 'edge',
-}
-
 export default function Home({ initialMessages }) {
   const [messages, setMessages] = useState(initialMessages || [])
   const [error, setError] = useState(null)
