@@ -1,5 +1,6 @@
 name = "d1-demo-react"
 compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
 
 [[d1_databases]]
 binding = "DB"
@@ -7,12 +8,14 @@ database_name = "d1-demo-db"
 database_id = "75298027-fc93-43f4-b00d-a0070794ce95"
 
 [env.production]
+nodejs_compat = true
 [[env.production.d1_databases]]
 binding = "DB"
 database_name = "d1-demo-db"
 database_id = "75298027-fc93-43f4-b00d-a0070794ce95"
 
 [env.preview]
+nodejs_compat = true
 [[env.preview.d1_databases]]
 binding = "DB"
 database_name = "d1-demo-db-preview"
