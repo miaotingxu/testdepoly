@@ -1,6 +1,15 @@
+import { useState, useEffect } from 'react'
+
 export default function MessageList({ messages, error }) {
+  const [isClient, setIsClient] = useState(false)
+
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
+
   const formatTime = (timestamp) => {
     if (!timestamp) return ''
+    if (!isClient) return '...' // 初始加载占位符
     
     const date = new Date(timestamp)
     const now = new Date()

@@ -1,5 +1,6 @@
 // 模拟数据，用于本地开发测试
-export const runtime = 'edge'
+// Cloudflare 部署时取消下面注释，API 使用标准 edge runtime
+// export const runtime = 'edge'
 
 let mockMessages = [
   {
