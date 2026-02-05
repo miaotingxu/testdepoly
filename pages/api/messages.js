@@ -1,4 +1,6 @@
 // 模拟数据，用于本地开发测试
+export const runtime = 'edge'
+
 let mockMessages = [
   {
     id: 1,

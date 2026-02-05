@@ -1,4 +1,7 @@
 import { useState } from 'react'
+
+export const runtime = 'edge'
+
 import MessageForm from '../components/MessageForm'
 import MessageList from '../components/MessageList'
 import DeploymentInfo from '../components/DeploymentInfo'
