@@ -5,7 +5,7 @@ import DeploymentInfo from '../components/DeploymentInfo'
 
 // 对于本地开发，禁用 Edge Runtime 以避免 CSS/DOM 错误
 // Cloudflare 部署时取消下面注释，页面使用 experimental-edge（Next.js 15 要求）
-// export const runtime = 'experimental-edge'
+export const runtime = 'experimental-edge'
 
 export default function Home({ initialMessages }) {
   const [messages, setMessages] = useState(initialMessages || [])
